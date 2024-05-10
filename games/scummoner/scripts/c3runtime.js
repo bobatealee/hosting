@@ -8769,7 +8769,7 @@ this._arr;for(let x=this._cx-1;x>=0;--x)if(arr[x][0][0]===v)return x;return-1},J
 
 			if (properties)		// note properties may be null in some cases
 			{						
-				debugger;
+				//debugger;
 				this.GetRuntime().AddLoadPromise(
 					new Promise(
 						(resolve,reject)=>{
