@@ -1,7 +1,7 @@
 {
 	"name": "DOOM The Gallery Experience",
 	"short_name": "DOOM The Gallery Experience",
-	"description": "",
+	"description": "DOOM: The Gallery Experience was created as an art piece designed to parody the wonderfully pretentious world of gallery openings.",
 	"start_url": "index.html",
 	"display": "fullscreen",
 	"orientation": "landscape",

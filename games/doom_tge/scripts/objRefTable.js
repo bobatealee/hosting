@@ -123,6 +123,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Cnds.PickByComparison,
 		C3.Plugins.Sprite.Exps.LayerName,
 		C3.Plugins.Audio.Acts.SetVolume,
+		C3.Plugins.Browser.Cnds.WindowHasFocus,
 		C3.Plugins.System.Cnds.IsGroupActive,
 		C3.Plugins.Sprite.Acts.SetZElevation,
 		C3.Plugins.Sprite.Exps.ZElevation,
