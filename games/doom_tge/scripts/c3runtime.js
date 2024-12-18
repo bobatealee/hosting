@@ -6310,7 +6310,6 @@ self.C3_ExpressionFuncs = [
 			const n1 = p._GetNode(1);
 			return () => ((n0.ExpObject() - n1.ExpObject()) + 1);
 		},
-		() => "collision",
 		() => "grunt",
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
