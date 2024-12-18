@@ -33,7 +33,6 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Exps.find,
 		C3.Plugins.System.Exps.regexmatchat,
 		C3.Plugins.Browser.Exps.URL,
-		C3.Plugins.System.Cnds.IsPreview,
 		C3.Plugins.System.Cnds.CompareBoolVar,
 		C3.Plugins.Rex_NGIO_Authentication.Acts.Login,
 		C3.Plugins.System.Acts.SetBoolVar,
@@ -50,6 +49,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.TiledBg.Acts.SetImageOffsetY,
 		C3.Plugins.TiledBg.Exps.ImageOffsetY,
 		C3.Plugins.Shape3D.Acts.SetTowardPosition,
+		C3.Plugins.Audio.Cnds.OnEnded,
 		C3.Plugins.Rex_NGIO_Authentication.Cnds.OnLoginSuccess,
 		C3.Plugins.Rex_NGIO_Medal.Acts.GetList,
 		C3.Plugins.Rex_NGIO_Medal.Cnds.OnGetMedalsListSuccess,
@@ -162,7 +162,6 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Sprite.Cnds.CompareFrame,
 		C3.Plugins.Timeline.Cnds.IsPlayingByTags,
 		C3.Plugins.Timeline.Acts.PlayTimeline,
-		C3.Plugins.Touch.Cnds.OnTapGestureObject,
 		C3.Plugins.Touch.Cnds.OnTouchStart,
 		C3.Plugins.Audio.Cnds.IsTagPlaying,
 		C3.Plugins.Timeline.Cnds.OnKeyframeReached,
@@ -226,8 +225,6 @@ self.C3_GetObjectRefTable = function () {
 	];
 };
 self.C3_JsPropNameTable = [
-	{test1: 0},
-	{test2: 0},
 	{Wallpaper: 0},
 	{Wood: 0},
 	{WoodDark: 0},
@@ -469,8 +466,6 @@ self.C3_JsPropNameTable = [
 ];
 
 self.InstanceType = {
-	test1: class extends self.ITiledBackgroundInstance {},
-	test2: class extends self.ITiledBackgroundInstance {},
 	Wallpaper: class extends self.ITiledBackgroundInstance {},
 	Wood: class extends self.ITiledBackgroundInstance {},
 	WoodDark: class extends self.ITiledBackgroundInstance {},
