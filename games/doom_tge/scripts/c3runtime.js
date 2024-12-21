@@ -2199,6 +2199,21 @@ self["C3_Shaders"]["brightness"] = {
 	animated: false,
 	parameters: [["brightness",0,"percent"]]
 };
+self["C3_Shaders"]["warpobject"] = {
+	glsl: "#ifdef GL_FRAGMENT_PRECISION_HIGH\n#define highmedp highp\n#else\n#define highmedp mediump\n#endif\nvarying mediump vec2 vTex;\nuniform lowp sampler2D samplerFront;\nuniform mediump vec2 srcStart;\nuniform mediump vec2 srcEnd;\nuniform mediump vec2 srcOriginStart;\nuniform mediump vec2 srcOriginEnd;\nuniform highmedp float seconds;\nuniform mediump vec2 pixelSize;\nuniform mediump float devicePixelRatio;\nuniform mediump float layerScale;\nuniform mediump float freqX;\nuniform mediump float freqY;\nuniform mediump float ampX;\nuniform mediump float ampY;\nuniform mediump float speedX;\nuniform mediump float speedY;\nvoid main(void)\n{\nmediump float _2pi = 2.0 * 3.14159265359;\nmediump vec2 srcOriginSize = srcOriginEnd - srcOriginStart;\nmediump vec2 n = ((vTex - srcOriginStart) / srcOriginSize);\nmediump vec2 p = vTex;\np.x += cos(n.y * _2pi * freqY + seconds * speedY * _2pi) * ampY * pixelSize.x * devicePixelRatio * layerScale;\np.y += sin(n.x * _2pi * freqX + seconds * speedX * _2pi) * ampX * pixelSize.y * devicePixelRatio * layerScale;\np = clamp(p, min(srcStart, srcEnd), max(srcStart, srcEnd));\ngl_FragColor = texture2D(samplerFront, p);\n}",
+	glslWebGL2: "",
+	wgsl: "%%SAMPLERFRONT_BINDING%% var samplerFront : sampler;\n%%TEXTUREFRONT_BINDING%% var textureFront : texture_2d<f32>;\nstruct ShaderParams {\nfreqX : f32,\nfreqY : f32,\nampX : f32,\nampY : f32,\nspeedX : f32,\nspeedY : f32\n};\n%%SHADERPARAMS_BINDING%% var<uniform> shaderParams : ShaderParams;\n%%C3PARAMS_STRUCT%%\n%%C3_UTILITY_FUNCTIONS%%\n%%FRAGMENTINPUT_STRUCT%%\n%%FRAGMENTOUTPUT_STRUCT%%\nconst pi2 : f32 = 6.283185307179586;\n@fragment\nfn main(input : FragmentInput) -> FragmentOutput\n{\nvar pixelSize : vec2<f32> = c3_getPixelSize(textureFront);\nvar n : vec2<f32> = c3_srcOriginToNorm(input.fragUV);\nvar p : vec2<f32> = input.fragUV + vec2<f32>(\ncos(n.y * pi2 * shaderParams.freqY + c3Params.seconds * shaderParams.speedY * pi2) * shaderParams.ampY * pixelSize.x * c3Params.devicePixelRatio * c3Params.layerScale,\nsin(n.x * pi2 * shaderParams.freqX + c3Params.seconds * shaderParams.speedX * pi2) * shaderParams.ampX * pixelSize.y * c3Params.devicePixelRatio * c3Params.layerScale\n);\np = c3_clampToSrc(p);\nvar output : FragmentOutput;\noutput.color = textureSample(textureFront, samplerFront, p);\nreturn output;\n}",
+	blendsBackground: false,
+	usesDepth: false,
+	extendBoxHorizontal: 30,
+	extendBoxVertical: 30,
+	crossSampling: false,
+	mustPreDraw: false,
+	preservesOpaqueness: false,
+	supports3dDirectRendering: false,
+	animated: true,
+	parameters: [["freqX",0,"float"],["freqY",0,"float"],["ampX",0,"float"],["ampY",0,"float"],["speedX",0,"float"],["speedY",0,"float"]]
+};
 self["C3_Shaders"]["fogexponential"] = {
 	glsl: "varying mediump vec2 vTex;\nuniform lowp sampler2D samplerFront;\nuniform mediump vec2 srcStart;\nuniform mediump vec2 srcEnd;\nuniform lowp sampler2D samplerDepth;\nuniform mediump vec2 destStart;\nuniform mediump vec2 destEnd;\nuniform mediump float zNear;\nuniform mediump float zFar;\nuniform lowp vec3 fogColor;\nuniform mediump float fogDensity;\nuniform mediump float nearDist;\nvoid main(void)\n{\nmediump float log2 = 1.442695;\nlowp vec4 front = texture2D(samplerFront, vTex);\nmediump vec2 tex = (vTex - srcStart) / (srcEnd - srcStart);\nmediump float depthSample = texture2D(samplerDepth, mix(destStart, destEnd, tex)).r;\nmediump float zLinear = zNear * zFar / (zFar + depthSample * (zNear - zFar));\nmediump float fogDist = max(zLinear - nearDist, 0.0);\nmediump float fogAmount = clamp(1.0 - exp2(-fogDensity * fogDensity * fogDist * fogDist * log2), 0.0, 1.0);\ngl_FragColor = mix(front, vec4(fogColor * front.a, front.a), fogAmount);\n}",
 	glslWebGL2: "",
@@ -2325,6 +2340,11 @@ const C3=self.C3,SpriteFontText=self.SpriteFontText,DEFAULT_SPRITEFONT_OPTS={wid
 // scripts/plugins/Touch/c3runtime/touchInfo.js
 {
 const C3=self.C3,GESTURE_HOLD_THRESHOLD=15,GESTURE_HOLD_TIMEOUT=500,GESTURE_TAP_TIMEOUT=333,GESTURE_DOUBLETAP_THRESHOLD=25;let lastTapX=-1e3,lastTapY=-1e3,lastTapTime=-1e4;C3.Plugins.Touch.TouchInfo=class extends C3.DefendedBase{constructor(){super(),this._pointerId=0,this._startIndex=0,this._startTime=0,this._time=0,this._lastTime=0,this._startX=0,this._startY=0,this._x=0,this._y=0,this._lastX=0,this._lastY=0,this._width=0,this._height=0,this._pressure=0,this._hasTriggeredHold=!1,this._isTooFarForHold=!1}Release(){}Init(t,s,i,e,_){this._pointerId=e,this._startIndex=_,this._time=t,this._lastTime=t,this._startTime=t,this._startX=s,this._startY=i,this._x=s,this._y=i,this._lastX=s,this._lastY=i}Update(t,s,i,e,_,h){this._lastTime=this._time,this._time=t,this._lastX=this._x,this._lastY=this._y,this._x=s,this._y=i,this._width=e,this._height=_,this._pressure=h,!this._isTooFarForHold&&C3.distanceTo(this._startX,this._startY,this._x,this._y)>=GESTURE_HOLD_THRESHOLD&&(this._isTooFarForHold=!0)}GetId(){return this._pointerId}GetStartIndex(){return this._startIndex}GetTime(){return this._time}_SetLastTime(t){this._lastTime=t}GetX(){return this._x}GetY(){return this._y}GetSpeed(){const t=C3.distanceTo(this._x,this._y,this._lastX,this._lastY),s=(this._time-this._lastTime)/1e3;return 0<s?t/s:0}GetAngle(){return C3.angleTo(this._lastX,this._lastY,this._x,this._y)}GetWidth(){return this._width}GetHeight(){return this._height}GetPressure(){return this._pressure}ShouldTriggerHold(t){return!this._hasTriggeredHold&&t-this._startTime>=GESTURE_HOLD_TIMEOUT&&!this._isTooFarForHold&&C3.distanceTo(this._startX,this._startY,this._x,this._y)<GESTURE_HOLD_THRESHOLD&&(this._hasTriggeredHold=!0)}ShouldTriggerTap(t){return!this._hasTriggeredHold&&t-this._startTime<=GESTURE_TAP_TIMEOUT&&!this._isTooFarForHold&&C3.distanceTo(this._startX,this._startY,this._x,this._y)<GESTURE_HOLD_THRESHOLD?t-lastTapTime<=2*GESTURE_TAP_TIMEOUT&&C3.distanceTo(lastTapX,lastTapY,this._x,this._y)<GESTURE_DOUBLETAP_THRESHOLD?(lastTapX=-1e3,lastTapY=-1e3,lastTapTime=-1e4,"double-tap"):(lastTapX=this._x,lastTapY=this._y,lastTapTime=t,"single-tap"):""}GetPositionForLayer(t,s,i){if(void 0===s){const e=t.GetLayerByIndex(0);return e.CanvasCssToLayer_DefaultTransform(this._x,this._y)[i?0:1]}{const _=t.GetLayer(s);return _?_.CanvasCssToLayer(this._x,this._y)[i?0:1]:0}}};
+}
+
+// scripts/plugins/AJAX/c3runtime/runtime.js
+{
+{const a=self.C3;a.Plugins.AJAX=class extends a.SDKPluginBase{constructor(e){super(e)}Release(){super.Release()}}}{const d=self.C3;d.Plugins.AJAX.Type=class extends d.SDKTypeBase{constructor(e){super(e)}Release(){super.Release()}OnCreate(){}}}{const g=self.C3;g.Plugins.AJAX.Instance=class extends g.SDKInstanceBase{constructor(e,t){if(super(e),this._lastData="",this._lastStatusCode=0,this._curTag="",this._progress=0,this._timeout=-1,this._nextRequestHeaders=new Map,this._nextReponseBinaryData=null,this._nextRequestOverrideMimeType="",this._nextRequestWithCredentials=!1,this._nwjsFs=null,this._nwjsPath=null,this._nwjsAppFolder=null,this._isNWjs=this._runtime.IsNWjs(),this._isNWjs){this._nwjsFs=require("fs"),this._nwjsPath=require("path");const s=self["process"]||nw["process"];this._nwjsAppFolder=this._nwjsPath["dirname"](s["execPath"])+"\\"}}Release(){super.Release()}async _TriggerError(e,t,s){console.error(`[Construct] AJAX request to '${t}' (tag '${e}') failed: `,s),this._curTag=e,await this.TriggerAsync(g.Plugins.AJAX.Cnds.OnAnyError),this._curTag=e,await this.TriggerAsync(g.Plugins.AJAX.Cnds.OnError)}async _TriggerComplete(e){this._curTag=e,await this.TriggerAsync(g.Plugins.AJAX.Cnds.OnAnyComplete),this._curTag=e,await this.TriggerAsync(g.Plugins.AJAX.Cnds.OnComplete)}async _OnProgress(e,t){t["lengthComputable"]&&(this._progress=t["loaded"]/t["total"],this._curTag=e,await this.TriggerAsync(g.Plugins.AJAX.Cnds.OnProgress))}async _OnUploadProgress(e,t){t["lengthComputable"]&&(this._progress=t["loaded"]/t["total"],this._curTag=e,await this.TriggerAsync(g.Plugins.AJAX.Cnds.OnUploadProgress))}_OnError(s,r,e){if(this._isNWjs){const t=this._nwjsFs,a=this._nwjsAppFolder+r;t["existsSync"](a)?t["readFile"](a,{"encoding":"utf8"},(e,t)=>{e?this._TriggerError(s,r,e):(this._lastData=t.replace(/\r\n/g,"\n"),this._TriggerComplete(s))}):this._TriggerError(s,r,e)}else this._TriggerError(s,r,e)}async _DoCordovaRequest(t,s){const e=this._runtime.GetAssetManager(),r=this._nextReponseBinaryData;this._nextReponseBinaryData=null;try{if(r){const a=await e.CordovaFetchLocalFileAsArrayBuffer(s);r.SetArrayBufferTransfer(a),this._lastData=""}else{const i=await e.CordovaFetchLocalFileAsText(s);this._lastData=i.replace(/\r\n/g,"\n")}this._lastStatusCode=0,this._TriggerComplete(t)}catch(e){this._TriggerError(t,s,e)}}_DoRequest(o,u,e,l){return new Promise(t=>{const s=e=>{this._OnError(o,u,e),t()},r=this._nextReponseBinaryData;this._nextReponseBinaryData=null;try{const a=new XMLHttpRequest;a.onreadystatechange=()=>{if(4===a.readyState){if(r?this._lastData="":this._lastData=(a.responseText||"").replace(/\r\n/g,"\n"),this._lastStatusCode=a.status,400<=a.status)this._TriggerError(o,u,a.status+a.statusText);else{const e=this._lastData.length||r&&a.response instanceof ArrayBuffer;this._isNWjs&&!e||!this._isNWjs&&0===a.status&&!e||(r&&r.SetArrayBufferTransfer(a.response),this._TriggerComplete(o))}t()}},a.onerror=s,a.ontimeout=s,a.onabort=s,a["onprogress"]=e=>this._OnProgress(o,e),a["upload"]["onprogress"]=e=>this._OnUploadProgress(o,e),a.open(e,u),0<=this._timeout&&void 0!==a["timeout"]&&(a["timeout"]=this._timeout),a.responseType=r?"arraybuffer":"text",l&&!this._nextRequestHeaders.has("Content-Type")&&("string"!=typeof l?a["setRequestHeader"]("Content-Type","application/octet-stream"):a["setRequestHeader"]("Content-Type","application/x-www-form-urlencoded"));for(const[i,n]of this._nextRequestHeaders)try{a["setRequestHeader"](i,n)}catch(e){console.error(`[Construct] AJAX: Failed to set header '${i}: ${n}': `,e)}if(this._nextRequestHeaders.clear(),this._nextRequestOverrideMimeType){try{a["overrideMimeType"](this._nextRequestOverrideMimeType)}catch(e){console.error("[Construct] AJAX: failed to override MIME type: ",e)}this._nextRequestOverrideMimeType=""}this._nextRequestWithCredentials&&(a.withCredentials=!0,this._nextRequestWithCredentials=!1),l?a.send(l):a.send()}catch(e){s(e)}})}GetDebuggerProperties(){const e="plugins.ajax.debugger";return[{title:e+".title",properties:[{name:e+".last-status-code",value:this._lastStatusCode},{name:e+".last-data",value:this._lastData}]}]}SaveToJson(){return{"lastData":this._lastData,"lastStatusCode":this._lastStatusCode}}LoadFromJson(e){this._lastData=e["lastData"],this._lastStatusCode=e.hasOwnProperty("lastStatusCode")?e["lastStatusCode"]:0,this._curTag="",this._progress=0}}}{const $=self.C3;$.Plugins.AJAX.Cnds={OnComplete(e){return $.equalsNoCase(this._curTag,e)},OnAnyComplete(){return!0},OnError(e){return $.equalsNoCase(this._curTag,e)},OnAnyError(){return!0},OnProgress(e){return $.equalsNoCase(this._curTag,e)},OnUploadProgress(e){return $.equalsNoCase(this._curTag,e)}}}{const da=self.C3;da.Plugins.AJAX.Acts={async Request(e,t){this._runtime.IsCordova()&&da.IsRelativeURL(t)&&this._runtime.GetAssetManager().IsFileProtocol()?await this._DoCordovaRequest(e,t):await this._DoRequest(e,t,"GET",null)},async RequestFile(e,t){this._runtime.IsCordova()&&this._runtime.GetAssetManager().IsFileProtocol()?await this._DoCordovaRequest(e,t):await this._DoRequest(e,t,"GET",null)},async Post(e,t,s,r){await this._DoRequest(e,t,r,s)},async PostBinary(e,t,s,r){if(s){const a=s.GetFirstPicked(this._inst);if(a){const i=a.GetSdkInstance(),n=i.GetArrayBufferReadOnly();await this._DoRequest(e,t,r,n)}}},SetTimeout(e){this._timeout=1e3*e},SetHeader(e,t){this._nextRequestHeaders.set(e,t)},SetResponseBinary(e){if(e){const t=e.GetFirstPicked(this._inst);t&&(this._nextReponseBinaryData=t.GetSdkInstance())}},OverrideMIMEType(e){this._nextRequestOverrideMimeType=e},SetWithCredentials(e){this._nextRequestWithCredentials=!!e}}}{const Aa=self.C3;Aa.Plugins.AJAX.Exps={LastData(){return this._lastData},LastStatusCode(){return this._lastStatusCode},Progress(){return this._progress},Tag(){return this._curTag}}}
 }
 
 // scripts/plugins/Rex_NGIO_Authentication/newgroundsio.js
@@ -6085,6 +6105,11 @@ self.C3_ExpressionFuncs = [
 			const f0 = p._GetNode(0).GetBoundMethod();
 			return () => (60 * f0());
 		},
+		() => "results",
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => f0(255, 255, 255);
+		},
 		() => -1,
 		p => {
 			const n0 = p._GetNode(0);
@@ -6100,11 +6125,6 @@ self.C3_ExpressionFuncs = [
 			return () => f0(192, 192, 255);
 		},
 		() => "title",
-		() => "results",
-		p => {
-			const f0 = p._GetNode(0).GetBoundMethod();
-			return () => f0(255, 255, 255);
-		},
 		() => 50,
 		() => 100,
 		() => "",
@@ -6481,11 +6501,22 @@ self.C3_ExpressionFuncs = [
 		() => 82084,
 		() => 82085,
 		() => 82086,
-		() => "loading",
+		() => "splashes",
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
-			const n1 = p._GetNode(1);
-			return () => ((f0() * (n1.ExpObject() - 24)) + 14);
+			const f1 = p._GetNode(1).GetBoundMethod();
+			const f2 = p._GetNode(2).GetBoundMethod();
+			const f3 = p._GetNode(3).GetBoundMethod();
+			const f4 = p._GetNode(4).GetBoundMethod();
+			return () => f0(f1(), Math.round(f2(0, (f3(f4(), "\n") - 1))), "\n");
+		},
+		() => "loading",
+		p => {
+			const n0 = p._GetNode(0);
+			const f1 = p._GetNode(1).GetBoundMethod();
+			const n2 = p._GetNode(2);
+			const f3 = p._GetNode(3).GetBoundMethod();
+			return () => C3.lerp(n0.ExpObject(), ((f1() * (n2.ExpObject() - 24)) + 14), (10 * f3()));
 		},
 		() => "shrink",
 		() => 24,
@@ -6507,8 +6538,7 @@ self.C3_ExpressionFuncs = [
 			const n0 = p._GetNode(0);
 			const n1 = p._GetNode(1);
 			return () => ((n0.ExpObject() - n1.ExpObject()) - 5);
-		},
-		() => 75
+		}
 ];
 
 
