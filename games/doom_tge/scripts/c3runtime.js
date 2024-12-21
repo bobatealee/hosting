@@ -6480,7 +6480,35 @@ self.C3_ExpressionFuncs = [
 		() => 64,
 		() => 82084,
 		() => 82085,
-		() => 82086
+		() => 82086,
+		() => "loading",
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			const n1 = p._GetNode(1);
+			return () => ((f0() * (n1.ExpObject() - 24)) + 14);
+		},
+		() => "shrink",
+		() => 24,
+		() => 0.25,
+		() => "fade",
+		() => "grow",
+		() => 80,
+		() => 40,
+		p => {
+			const n0 = p._GetNode(0);
+			return () => (n0.ExpObject() - 10);
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			const n1 = p._GetNode(1);
+			return () => (n0.ExpObject() - (n1.ExpObject() / 2));
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			const n1 = p._GetNode(1);
+			return () => ((n0.ExpObject() - n1.ExpObject()) - 5);
+		},
+		() => 75
 ];
 
 

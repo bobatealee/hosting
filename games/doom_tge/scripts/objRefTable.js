@@ -123,9 +123,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Cnds.PickByComparison,
 		C3.Plugins.Sprite.Exps.LayerName,
 		C3.Plugins.Audio.Acts.SetVolume,
-		C3.Plugins.Browser.Cnds.WindowHasFocus,
 		C3.Plugins.Mouse.Cnds.HasPointerLock,
-		C3.Plugins.Mouse.Cnds.OnAnyClick,
 		C3.Plugins.System.Cnds.IsGroupActive,
 		C3.Plugins.Sprite.Acts.SetZElevation,
 		C3.Plugins.Sprite.Exps.ZElevation,
@@ -141,6 +139,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Mouse.Acts.ReleasePointerLock,
 		C3.Plugins.Keyboard.Cnds.OnAnyKey,
 		C3.Plugins.Keyboard.Cnds.OnAnyKeyReleased,
+		C3.Plugins.Mouse.Cnds.OnAnyClick,
 		C3.Plugins.Mouse.Cnds.OnWheel,
 		C3.Plugins.Touch.Cnds.IsInTouch,
 		C3.Plugins.Sprite.Acts.SetOpacity,
@@ -219,7 +218,21 @@ self.C3_GetObjectRefTable = function () {
 		C3.Behaviors.MoveTo.Cnds.OnArrived,
 		C3.Plugins.System.Cnds.PickAll,
 		C3.Plugins.Touch.Cnds.OnTapGesture,
-		C3.Plugins.Rex_NGIO_Medal.Acts.Unlock
+		C3.Plugins.Rex_NGIO_Medal.Acts.Unlock,
+		C3.Plugins.NinePatch.Acts.SetPos,
+		C3.Plugins.NinePatch.Exps.Y,
+		C3.Plugins.NinePatch.Acts.SetOpacity,
+		C3.Plugins.NinePatch.Cnds.HasTags,
+		C3.Plugins.NinePatch.Acts.SetWidth,
+		C3.Plugins.System.Exps.loadingprogress,
+		C3.Plugins.System.Cnds.OnLoadFinished,
+		C3.Plugins.NinePatch.Acts.ChangeTags,
+		C3.Behaviors.Tween.Cnds.OnTweensFinished,
+		C3.Behaviors.Tween.Cnds.IsPlaying,
+		C3.Plugins.NinePatch.Acts.SetSize,
+		C3.Plugins.NinePatch.Exps.Height,
+		C3.Plugins.Sprite.Cnds.CompareOpacity,
+		C3.Plugins.Mouse.Cnds.IsButtonDown
 	];
 };
 self.C3_JsPropNameTable = [
@@ -392,9 +405,12 @@ self.C3_JsPropNameTable = [
 	{NGAuth: 0},
 	{NGMedals: 0},
 	{Medals: 0},
+	{LoaderBar: 0},
+	{LoaderBase: 0},
+	{LoaderPlay: 0},
+	{LoaderButton: 0},
 	{GAME_mobile: 0},
 	{GAME_canLink: 0},
-	{GAME_interacted: 0},
 	{MENU_selected: 0},
 	{MENU_menu: 0},
 	{MENU_soundCountdown: 0},
@@ -608,5 +624,9 @@ self.InstanceType = {
 	ModalArt: class extends self.ISpriteInstance {},
 	NGAuth: class extends self.IInstance {},
 	NGMedals: class extends self.IInstance {},
-	Medals: class extends self.IArrayInstance {}
+	Medals: class extends self.IArrayInstance {},
+	LoaderBar: class extends self.IWorldInstance {},
+	LoaderBase: class extends self.IWorldInstance {},
+	LoaderPlay: class extends self.ISpriteInstance {},
+	LoaderButton: class extends self.IWorldInstance {}
 }
