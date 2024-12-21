@@ -232,6 +232,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.NinePatch.Acts.SetSize,
 		C3.Plugins.NinePatch.Exps.Height,
 		C3.Plugins.Sprite.Cnds.CompareOpacity,
+		C3.Plugins.Mouse.Acts.SetCursor2,
 		C3.Plugins.Mouse.Cnds.IsButtonDown
 	];
 };
