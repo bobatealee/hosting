@@ -6026,6 +6026,7 @@ self.C3_ExpressionFuncs = [
 		},
 		() => "music",
 		() => "music doom",
+		() => 4,
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
 			return () => (f0() * 4);
@@ -6098,7 +6099,6 @@ self.C3_ExpressionFuncs = [
 		() => 3,
 		() => "fullscreen: on",
 		() => "fullscreen: off",
-		() => 4,
 		() => "doom music: on",
 		() => "doom music: off",
 		p => {
