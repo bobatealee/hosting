@@ -2347,6 +2347,18 @@ const C3=self.C3,GESTURE_HOLD_THRESHOLD=15,GESTURE_HOLD_TIMEOUT=500,GESTURE_TAP_
 {const a=self.C3;a.Plugins.AJAX=class extends a.SDKPluginBase{constructor(e){super(e)}Release(){super.Release()}}}{const d=self.C3;d.Plugins.AJAX.Type=class extends d.SDKTypeBase{constructor(e){super(e)}Release(){super.Release()}OnCreate(){}}}{const g=self.C3;g.Plugins.AJAX.Instance=class extends g.SDKInstanceBase{constructor(e,t){if(super(e),this._lastData="",this._lastStatusCode=0,this._curTag="",this._progress=0,this._timeout=-1,this._nextRequestHeaders=new Map,this._nextReponseBinaryData=null,this._nextRequestOverrideMimeType="",this._nextRequestWithCredentials=!1,this._nwjsFs=null,this._nwjsPath=null,this._nwjsAppFolder=null,this._isNWjs=this._runtime.IsNWjs(),this._isNWjs){this._nwjsFs=require("fs"),this._nwjsPath=require("path");const s=self["process"]||nw["process"];this._nwjsAppFolder=this._nwjsPath["dirname"](s["execPath"])+"\\"}}Release(){super.Release()}async _TriggerError(e,t,s){console.error(`[Construct] AJAX request to '${t}' (tag '${e}') failed: `,s),this._curTag=e,await this.TriggerAsync(g.Plugins.AJAX.Cnds.OnAnyError),this._curTag=e,await this.TriggerAsync(g.Plugins.AJAX.Cnds.OnError)}async _TriggerComplete(e){this._curTag=e,await this.TriggerAsync(g.Plugins.AJAX.Cnds.OnAnyComplete),this._curTag=e,await this.TriggerAsync(g.Plugins.AJAX.Cnds.OnComplete)}async _OnProgress(e,t){t["lengthComputable"]&&(this._progress=t["loaded"]/t["total"],this._curTag=e,await this.TriggerAsync(g.Plugins.AJAX.Cnds.OnProgress))}async _OnUploadProgress(e,t){t["lengthComputable"]&&(this._progress=t["loaded"]/t["total"],this._curTag=e,await this.TriggerAsync(g.Plugins.AJAX.Cnds.OnUploadProgress))}_OnError(s,r,e){if(this._isNWjs){const t=this._nwjsFs,a=this._nwjsAppFolder+r;t["existsSync"](a)?t["readFile"](a,{"encoding":"utf8"},(e,t)=>{e?this._TriggerError(s,r,e):(this._lastData=t.replace(/\r\n/g,"\n"),this._TriggerComplete(s))}):this._TriggerError(s,r,e)}else this._TriggerError(s,r,e)}async _DoCordovaRequest(t,s){const e=this._runtime.GetAssetManager(),r=this._nextReponseBinaryData;this._nextReponseBinaryData=null;try{if(r){const a=await e.CordovaFetchLocalFileAsArrayBuffer(s);r.SetArrayBufferTransfer(a),this._lastData=""}else{const i=await e.CordovaFetchLocalFileAsText(s);this._lastData=i.replace(/\r\n/g,"\n")}this._lastStatusCode=0,this._TriggerComplete(t)}catch(e){this._TriggerError(t,s,e)}}_DoRequest(o,u,e,l){return new Promise(t=>{const s=e=>{this._OnError(o,u,e),t()},r=this._nextReponseBinaryData;this._nextReponseBinaryData=null;try{const a=new XMLHttpRequest;a.onreadystatechange=()=>{if(4===a.readyState){if(r?this._lastData="":this._lastData=(a.responseText||"").replace(/\r\n/g,"\n"),this._lastStatusCode=a.status,400<=a.status)this._TriggerError(o,u,a.status+a.statusText);else{const e=this._lastData.length||r&&a.response instanceof ArrayBuffer;this._isNWjs&&!e||!this._isNWjs&&0===a.status&&!e||(r&&r.SetArrayBufferTransfer(a.response),this._TriggerComplete(o))}t()}},a.onerror=s,a.ontimeout=s,a.onabort=s,a["onprogress"]=e=>this._OnProgress(o,e),a["upload"]["onprogress"]=e=>this._OnUploadProgress(o,e),a.open(e,u),0<=this._timeout&&void 0!==a["timeout"]&&(a["timeout"]=this._timeout),a.responseType=r?"arraybuffer":"text",l&&!this._nextRequestHeaders.has("Content-Type")&&("string"!=typeof l?a["setRequestHeader"]("Content-Type","application/octet-stream"):a["setRequestHeader"]("Content-Type","application/x-www-form-urlencoded"));for(const[i,n]of this._nextRequestHeaders)try{a["setRequestHeader"](i,n)}catch(e){console.error(`[Construct] AJAX: Failed to set header '${i}: ${n}': `,e)}if(this._nextRequestHeaders.clear(),this._nextRequestOverrideMimeType){try{a["overrideMimeType"](this._nextRequestOverrideMimeType)}catch(e){console.error("[Construct] AJAX: failed to override MIME type: ",e)}this._nextRequestOverrideMimeType=""}this._nextRequestWithCredentials&&(a.withCredentials=!0,this._nextRequestWithCredentials=!1),l?a.send(l):a.send()}catch(e){s(e)}})}GetDebuggerProperties(){const e="plugins.ajax.debugger";return[{title:e+".title",properties:[{name:e+".last-status-code",value:this._lastStatusCode},{name:e+".last-data",value:this._lastData}]}]}SaveToJson(){return{"lastData":this._lastData,"lastStatusCode":this._lastStatusCode}}LoadFromJson(e){this._lastData=e["lastData"],this._lastStatusCode=e.hasOwnProperty("lastStatusCode")?e["lastStatusCode"]:0,this._curTag="",this._progress=0}}}{const $=self.C3;$.Plugins.AJAX.Cnds={OnComplete(e){return $.equalsNoCase(this._curTag,e)},OnAnyComplete(){return!0},OnError(e){return $.equalsNoCase(this._curTag,e)},OnAnyError(){return!0},OnProgress(e){return $.equalsNoCase(this._curTag,e)},OnUploadProgress(e){return $.equalsNoCase(this._curTag,e)}}}{const da=self.C3;da.Plugins.AJAX.Acts={async Request(e,t){this._runtime.IsCordova()&&da.IsRelativeURL(t)&&this._runtime.GetAssetManager().IsFileProtocol()?await this._DoCordovaRequest(e,t):await this._DoRequest(e,t,"GET",null)},async RequestFile(e,t){this._runtime.IsCordova()&&this._runtime.GetAssetManager().IsFileProtocol()?await this._DoCordovaRequest(e,t):await this._DoRequest(e,t,"GET",null)},async Post(e,t,s,r){await this._DoRequest(e,t,r,s)},async PostBinary(e,t,s,r){if(s){const a=s.GetFirstPicked(this._inst);if(a){const i=a.GetSdkInstance(),n=i.GetArrayBufferReadOnly();await this._DoRequest(e,t,r,n)}}},SetTimeout(e){this._timeout=1e3*e},SetHeader(e,t){this._nextRequestHeaders.set(e,t)},SetResponseBinary(e){if(e){const t=e.GetFirstPicked(this._inst);t&&(this._nextReponseBinaryData=t.GetSdkInstance())}},OverrideMIMEType(e){this._nextRequestOverrideMimeType=e},SetWithCredentials(e){this._nextRequestWithCredentials=!!e}}}{const Aa=self.C3;Aa.Plugins.AJAX.Exps={LastData(){return this._lastData},LastStatusCode(){return this._lastStatusCode},Progress(){return this._progress},Tag(){return this._curTag}}}
 }
 
+// scripts/plugins/gamepad/c3runtime/runtime.js
+{
+{const a=self.C3;a.Plugins.gamepad=class extends a.SDKPluginBase{constructor(t){super(t)}Release(){super.Release()}}}{const d=self.C3;d.Plugins.gamepad.Type=class extends d.SDKTypeBase{constructor(t){super(t)}Release(){super.Release()}OnCreate(){}}}{const g=self.C3,h="gamepad";class i{constructor(t,e,s){this._index=t,this._id=e,this._vibrationEffects=new Set(s),this._state=new j,this._oldState=new j,this._buttonsPressed=[],this._buttonsReleased=[]}GetID(){return this._id}Update(t,e){const s=this._oldState;this._oldState=this._state,this._state=s,this._state.Update(t,e),g.resizeArray(this._buttonsPressed,this._state.GetButtonCount(),!1),g.resizeArray(this._buttonsReleased,this._state.GetButtonCount(),!1);for(let t=0,e=this._state.GetButtonCount();t<e;++t){const n=this._oldState.GetButtonAt(t),a=this._state.GetButtonAt(t);.5<=a&&n<.5&&(this._buttonsPressed[t]=!0),a<.5&&.5<=n&&(this._buttonsReleased[t]=!0)}}GetButtonCount(){return this._state.GetButtonCount()}GetAxisCount(){return this._state.GetAxisCount()}HasButtonBecomePressed(t){return!((t=Math.floor(t))<0||t>=this._buttonsPressed.length)&&this._buttonsPressed[t]}HasButtonBecomeReleased(t){return!((t=Math.floor(t))<0||t>=this._buttonsReleased.length)&&this._buttonsReleased[t]}ResetButtonPressAndReleaseFlags(){this._buttonsPressed.fill(!1),this._buttonsReleased.fill(!1)}GetButtonAt(t){return this._state.GetButtonAt(t)}IsButtonDown(t){return.5<=this._state.GetButtonAt(t)}GetAxisAt(t){return this._state.GetAxisAt(t)}GetIndex(){return this._index}GetVibrationEffects(){return this._vibrationEffects}}class j{constructor(){this._buttons=[],this._axes=[]}Update(e,t){const s=this._buttons;let n=0;for(let t=e.length;n<t;++n){const a=e[n];n===s.length?s.push(a["value"]):s[n]=a["value"]}n<s.length&&g.truncateArray(s,n),g.shallowAssignArray(this._axes,t)}GetButtonCount(){return this._buttons.length}GetAxisCount(){return this._axes.length}GetButtonAt(t){return(t=Math.floor(t))<0||t>=this._buttons.length?0:this._buttons[t]}GetAxisAt(t){return(t=Math.floor(t))<0||t>=this._axes.length?0:this._axes[t]}}g.Plugins.gamepad.Instance=class extends g.SDKInstanceBase{constructor(t,e){super(t,h),this._deadZone=25,this._lastButton=0,this._lastIndex=-1,this._gamepads=new Map,e&&(this._deadZone=e[0]),this.AddDOMMessageHandler("gamepad-connected",t=>this._OnGamepadConnected(t)),this.AddDOMMessageHandler("gamepad-disconnected",t=>this._OnGamepadDisconnected(t)),this.AddDOMMessageHandler("input-update",t=>this._OnInputUpdate(t));const s=this.GetRuntime().Dispatcher();this._disposables=new g.CompositeDisposable(g.Disposable.From(s,"tick2",()=>this._OnTick2()),g.Disposable.From(s,"suspend",()=>this._OnSuspend()),g.Disposable.From(s,"resume",()=>this._OnResume())),this.PostToDOM("ready")}Release(){super.Release()}_OnGamepadConnected(t){const e=t["index"],s=t["id"],n=t["vibrationEffects"];this._gamepads.has(e)||(this._gamepads.set(e,new i(e,s,n)),this._lastIndex=e,this.Trigger(g.Plugins.gamepad.Cnds.OnGamepadConnected),this._lastIndex=-1)}_OnGamepadDisconnected(t){const e=t["index"];this._lastIndex=e,this.Trigger(g.Plugins.gamepad.Cnds.OnGamepadDisconnected),this._lastIndex=-1,this._gamepads.delete(e)}_OnInputUpdate(t){for(const e of t)this._OnGamepadInputUpdate(e)}_OnGamepadInputUpdate(t){const e=t["index"],s=(this._gamepads.has(e)||this._OnGamepadConnected(t),this._gamepads.get(e));s.Update(t["buttons"],t["axes"]);for(let t=0,e=s.GetButtonCount();t<e;++t)s.HasButtonBecomePressed(t)&&(this._lastButton=t)}_GetGamepadByIndex(t){return this._gamepads.get(Math.floor(t))||null}_GetAllGamepadsByIndex(t){if(-1===t)return[...this._gamepads.values()];{const e=this._gamepads.get(Math.floor(t));return e?[e]:[]}}_OnTick2(){for(const t of this._gamepads.values())t.ResetButtonPressAndReleaseFlags()}_OnSuspend(){this.PostToDOM("suspend")}_OnResume(){this.PostToDOM("resume")}GetDebuggerProperties(){const t="plugins.gamepad";return[{title:t+".name",properties:[{name:t+".debugger.last-button",value:this._lastButton},{name:t+".properties.analog-deadzone.name",value:this._deadZone}]}]}}}{const ea=self.C3;ea.Plugins.gamepad.Cnds={OnGamepadConnected(){return!0},OnGamepadDisconnected(){return!0},IsButtonDown(t,e){const s=this._GetGamepadByIndex(t);if(!s)return!1;const n=s.IsButtonDown(e);return n&&(this._lastButton=e),n},OnButtonDown(t,e){const s=this._GetGamepadByIndex(t);if(!s)return!1;const n=s.HasButtonBecomePressed(e);return n&&(this._lastButton=e),n},OnButtonUp(t,e){const s=this._GetGamepadByIndex(t);if(!s)return!1;const n=s.HasButtonBecomeReleased(e);return n&&(this._lastButton=e),n},HasGamepads(){return 0<this._gamepads.size},CompareAxis(t,e,s,n){e=Math.floor(e);const a=this._GetGamepadByIndex(t);if(!a)return!1;let o=a.GetAxisAt(e),r=0;return r=e%2==0?a.GetAxisAt(e+1):a.GetAxisAt(e-1),o*=100,r*=100,Math.hypot(o,r)<=this._deadZone&&(o=0),ea.compare(o,s,n)},OnAnyButtonDown(t){const e=this._GetAllGamepadsByIndex(t);if(0!==e.length){const s=this._runtime,n=s.GetEventSheetManager(),a=s.GetCurrentEvent(),o=a.GetSolModifiers(),r=s.GetEventStack(),i=r.GetCurrentStackFrame(),u=r.Push(a);s.SetDebuggingEnabled(!1);for(const d of e)for(let t=0,e=d.GetButtonCount();t<e;++t)d.HasButtonBecomePressed(t)&&(this._lastIndex=d.GetIndex(),this._lastButton=t,n.PushCopySol(o),a.Retrigger(i,u),n.PopSol(o),this._lastIndex=-1);s.SetDebuggingEnabled(!0),r.Pop()}return!1},OnAnyButtonUp(t){const e=this._GetAllGamepadsByIndex(t);if(0!==e.length){const s=this._runtime,n=s.GetEventSheetManager(),a=s.GetCurrentEvent(),o=a.GetSolModifiers(),r=s.GetEventStack(),i=r.GetCurrentStackFrame(),u=r.Push(a);s.SetDebuggingEnabled(!1);for(const d of e)for(let t=0,e=d.GetButtonCount();t<e;++t)d.HasButtonBecomeReleased(t)&&(this._lastIndex=d.GetIndex(),this._lastButton=t,n.PushCopySol(o),a.Retrigger(i,u),n.PopSol(o),this._lastIndex=-1);s.SetDebuggingEnabled(!0),r.Pop()}return!1},IsButtonIndexDown(t,e){e=Math.floor(e);const s=this._GetGamepadByIndex(t);if(!s)return!1;const n=s.IsButtonDown(e);return n&&(this._lastButton=e),n},OnButtonIndexDown(t,e){e=Math.floor(e);const s=this._GetGamepadByIndex(t);if(!s)return!1;const n=s.HasButtonBecomePressed(e);return n&&(this._lastButton=e),n},OnButtonIndexUp(t,e){e=Math.floor(e);const s=this._GetGamepadByIndex(t);if(!s)return!1;const n=s.HasButtonBecomeReleased(e);return n&&(this._lastButton=e),n},GamepadSupportsVibrationType(t,e){const s=this._GetGamepadByIndex(t);if(!s)return!1;const n=s.GetVibrationEffects();return 0===e?n.has("dual-rumble"):1===e&&n.has("trigger-rumble")},SupportsGamepad(){return!0}}}{const k0=self.C3;k0.Plugins.gamepad.Acts={VibrateDualRumble(t,e,s,n){this.PostToDOM("vibrate-dual-rumble",{"index":t,"duration":e,"weakMag":k0.clamp(s/100,0,1),"strongMag":k0.clamp(n/100,0,1)})},VibrateTriggerRumble(t,e,s,n,a,o){this.PostToDOM("vibrate-trigger-rumble",{"index":t,"duration":e,"weakMag":k0.clamp(s/100,0,1),"strongMag":k0.clamp(n/100,0,1),"leftMag":k0.clamp(a/100,0,1),"rightMag":k0.clamp(o/100,0,1)})},ResetVibrate(t){this.PostToDOM("reset-vibrate",{"index":t})}}}{const w0=self.C3;w0.Plugins.gamepad.Exps={GamepadCount(){return this._gamepads.size},GamepadID(t){const e=this._GetGamepadByIndex(t);return e?e.GetID():""},GamepadIndex(){return this._lastIndex},GamepadAxes(t){const s=this._GetGamepadByIndex(t);if(!s)return"";let n="";for(let t=0,e=s.GetAxisCount();t<e;++t)n+=`Axis ${t}: ${Math.round(100*s.GetAxisAt(t))}
+`;return n},GamepadButtons(t){const s=this._GetGamepadByIndex(t);if(!s)return"";let n="";for(let t=0,e=s.GetButtonCount();t<e;++t)n+=`Button ${t}: ${Math.round(100*s.GetButtonAt(t))}
+`;return n},RawButton(t,e){const s=this._GetGamepadByIndex(t);return s?s.GetButtonAt(Math.floor(e)):0},RawAxis(t,e){const s=this._GetGamepadByIndex(t);return s?s.GetAxisAt(Math.floor(e)):0},RawButtonCount(t){const e=this._GetGamepadByIndex(t);return e?e.GetButtonCount():0},RawAxisCount(t){const e=this._GetGamepadByIndex(t);return e?e.GetAxisCount():0},Button(t,e){const s=this._GetGamepadByIndex(t);return s?100*s.GetButtonAt(Math.floor(e)):0},Axis(t,e){e=Math.floor(e);const s=this._GetGamepadByIndex(t);if(!s)return 0;let n=s.GetAxisAt(e),a=0;return a=e%2==0?s.GetAxisAt(e+1):s.GetAxisAt(e-1),n*=100,a*=100,n=Math.hypot(n,a)<=this._deadZone?0:n},ButtonIndex(){return this._lastButton},LastButton(){return this._lastButton}}}
+}
+
+// scripts/plugins/LocalStorage/c3runtime/runtime.js
+{
+{const a=self.C3;a.Plugins.LocalStorage=class extends a.SDKPluginBase{constructor(e){super(e)}Release(){super.Release()}}}{const d=self.C3;d.Plugins.LocalStorage.Type=class extends d.SDKTypeBase{constructor(e){super(e)}Release(){super.Release()}OnCreate(){}}}{const g=self.C3,h="localstorage";g.Plugins.LocalStorage.Instance=class extends g.SDKInstanceBase{constructor(e,t){super(e,h),this._currentKey="",this._lastValue="",this._keyNamesList=[],this._errorMessage="",this._isPersistent=!1,this._pendingGets=0,this._pendingSets=0,this._isInMemoryOnly=!1,t&&(this._isInMemoryOnly=t[0]);const s=this._runtime._GetProjectStorage();this._storage=null,this._isInMemoryOnly?this._storage=s.createInstance({forceInMemoryFallback:!0}):this._storage=s,this._debugCache=new Map,this._isLoadingDebugCache=!1,this._runtime.AddLoadPromise(this._Init())}async _Init(){const e=await Promise.race([this.PostToDOMAsync("init"),g.Wait(3e3)]);e&&(this._isPersistent=e["isPersistent"])}Release(){super.Release()}async _TriggerStorageError(e){this._errorMessage=this._GetErrorString(e),await this.TriggerAsync(g.Plugins.LocalStorage.Cnds.OnError)}_GetErrorString(e){return e?"string"==typeof e?e:"string"==typeof e.message?e.message:"string"==typeof e.name?e.name:"string"==typeof e.data?e.data:"unknown error":"unknown error"}GetDebuggerProperties(){return this._isLoadingDebugCache||this._DebugCacheStorage(),[{title:"plugins.localstorage.name",properties:[...this._debugCache.entries()].map(t=>({name:"$"+t[0],value:t[1],onedit:e=>this._storage.setItem(t[0],e)}))}]}async _DebugCacheStorage(){this._isLoadingDebugCache=!0;try{const s=await this._storage.keys(),r=(s.sort((e,t)=>{const s=e.toLowerCase(),r=t.toLowerCase();return s<r?-1:r<s?1:0}),await Promise.all(s.map(e=>this._storage.getItem(e))));this._debugCache.clear();for(let e=0,t=s.length;e<t;++e)this._debugCache.set(s[e],r[e])}catch(e){console.warn("[C3 debugger] Error displaying local storage: ",e)}finally{this._isLoadingDebugCache=!1}}}}{const B=self.C3;B.Plugins.LocalStorage.Cnds={OnItemSet(e){return this._currentKey===e},OnAnyItemSet(){return!0},OnItemGet(e){return this._currentKey===e},OnAnyItemGet(){return!0},OnItemRemoved(e){return this._currentKey===e},OnAnyItemRemoved(){return!0},OnCleared(){return!0},OnAllKeyNamesLoaded(){return!0},OnError(){return!0},OnItemExists(e){return this._currentKey===e},OnItemMissing(e){return this._currentKey===e},CompareKey(e,t){return B.compare(this._currentKey,e,t)},CompareValue(e,t){return B.compare(this._lastValue,e,t)},IsProcessingSets(){return 0<this._pendingSets},IsProcessingGets(){return 0<this._pendingGets},OnAllSetsComplete(){return!0},OnAllGetsComplete(){return!0},IsPersistent(){return this._isPersistent}}}{const L=self.C3;function IsExpressionType(e){return"string"==typeof e||"number"==typeof e}L.Plugins.LocalStorage.Acts={async SetItem(e,t){this._pendingSets++;try{const s=await this._storage.setItem(e,t);await this.ScheduleTriggers(async()=>{this._currentKey=e,this._lastValue=s,await this.TriggerAsync(L.Plugins.LocalStorage.Cnds.OnAnyItemSet),await this.TriggerAsync(L.Plugins.LocalStorage.Cnds.OnItemSet)})}catch(e){await this._TriggerStorageError(e)}finally{this._pendingSets--,0===this._pendingSets&&await this.TriggerAsync(L.Plugins.LocalStorage.Cnds.OnAllSetsComplete)}},async SetBinaryItem(e,t){if(t){const s=t.GetFirstPicked(this._inst);if(s){const r=s.GetSdkInstance();if(r){const i=r.GetArrayBufferReadOnly();this._pendingSets++;try{await this._storage.setItem(e,i),await this.ScheduleTriggers(async()=>{this._currentKey=e,this._lastValue="",await this.TriggerAsync(L.Plugins.LocalStorage.Cnds.OnAnyItemSet),await this.TriggerAsync(L.Plugins.LocalStorage.Cnds.OnItemSet)})}catch(e){await this._TriggerStorageError(e)}finally{this._pendingSets--,0===this._pendingSets&&await this.TriggerAsync(L.Plugins.LocalStorage.Cnds.OnAllSetsComplete)}}}}},async GetItem(e){this._pendingGets++;try{const t=await this._storage.getItem(e);await this.ScheduleTriggers(async()=>{this._currentKey=e,this._lastValue=IsExpressionType(t)?t:"",await this.TriggerAsync(L.Plugins.LocalStorage.Cnds.OnAnyItemGet),await this.TriggerAsync(L.Plugins.LocalStorage.Cnds.OnItemGet)})}catch(e){await this._TriggerStorageError(e)}finally{this._pendingGets--,0===this._pendingGets&&await this.TriggerAsync(L.Plugins.LocalStorage.Cnds.OnAllGetsComplete)}},async GetBinaryItem(t,e){if(e){const s=e.GetFirstPicked(this._inst);if(s){const r=s.GetSdkInstance();this._pendingGets++;try{let e=await this._storage.getItem(t);e=e instanceof ArrayBuffer?e:new ArrayBuffer(0),await this.ScheduleTriggers(async()=>{this._lastValue="",this._currentKey=t,r.SetArrayBufferTransfer(e),await this.TriggerAsync(L.Plugins.LocalStorage.Cnds.OnAnyItemGet),await this.TriggerAsync(L.Plugins.LocalStorage.Cnds.OnItemGet)})}catch(e){await this._TriggerStorageError(e)}finally{this._pendingGets--,0===this._pendingGets&&await this.TriggerAsync(L.Plugins.LocalStorage.Cnds.OnAllGetsComplete)}}}},async CheckItemExists(e){try{const t=await this._storage.getItem(e);await this.ScheduleTriggers(async()=>{this._currentKey=e,null==t?(this._lastValue="",await this.TriggerAsync(L.Plugins.LocalStorage.Cnds.OnItemMissing)):(this._lastValue=IsExpressionType(t)?t:"",await this.TriggerAsync(L.Plugins.LocalStorage.Cnds.OnItemExists))})}catch(e){await this._TriggerStorageError(e)}},async RemoveItem(e){try{await this._storage.removeItem(e),await this.ScheduleTriggers(async()=>{this._currentKey=e,this._lastValue="",await this.TriggerAsync(L.Plugins.LocalStorage.Cnds.OnAnyItemRemoved),await this.TriggerAsync(L.Plugins.LocalStorage.Cnds.OnItemRemoved)})}catch(e){await this._TriggerStorageError(e)}},async ClearStorage(){try{await this._storage.clear(),await this.ScheduleTriggers(async()=>{this._currentKey="",this._lastValue="",L.clearArray(this._keyNamesList),await this.TriggerAsync(L.Plugins.LocalStorage.Cnds.OnCleared)})}catch(e){await this._TriggerStorageError(e)}},async GetAllKeyNames(){try{const e=await this._storage.keys();await this.ScheduleTriggers(async()=>{this._keyNamesList=e,await this.TriggerAsync(L.Plugins.LocalStorage.Cnds.OnAllKeyNamesLoaded)})}catch(e){await this._TriggerStorageError(e)}},async RequestPersistent(){const e=await this.PostToDOMAsync("request-persistent");e["isOk"]&&(this._isPersistent=e["isPersistent"])},LoadMemoryFromJSON(t){if(this._isInMemoryOnly){let e;try{e=JSON.parse(t)}catch(e){return void console.error("[Local Storage] Failed to parse memory storage JSON: ",e)}e&&e["is-c3-storage"]&&Array.isArray(e["items"])||console.error("[Local Storage] Failed to load memory storage JSON: invalid data"),this._storage.SetMemoryStorage(new Map(e["items"]))}}}}{const qa=self.C3;qa.Plugins.LocalStorage.Exps={ItemValue(){return this._lastValue},Key(){return this._currentKey},KeyCount(){return this._keyNamesList.length},KeyAt(e){return(e=Math.floor(e))<0||e>=this._keyNamesList.length?"":this._keyNamesList[e]},ErrorMessage(){return this._errorMessage},MemoryStorageAsJSON(){return this._isInMemoryOnly?JSON.stringify({"is-c3-storage":!0,"items":[...this._storage.GetMemoryStorage()]}):""}}}
+}
+
 // scripts/plugins/Rex_NGIO_Authentication/newgroundsio.js
 {
 "use strict";
@@ -6007,6 +6019,19 @@ self.C3_ExpressionFuncs = [
 		() => 16,
 		() => 0,
 		() => "Main",
+		() => "sound",
+		() => "music",
+		() => "flashing",
+		() => "doom",
+		() => "doomUnlock",
+		() => "medalObservations",
+		() => "medalItems",
+		() => "medalSpending",
+		() => "medalSecrets",
+		() => "medalTime",
+		() => "medalDrinks",
+		() => "medalThoughtful",
+		() => "medalDoom",
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
 			const f1 = p._GetNode(1).GetBoundMethod();
@@ -6024,7 +6049,6 @@ self.C3_ExpressionFuncs = [
 			const v1 = p._GetNode(1).GetVar();
 			return () => (f0(v1.GetValue()) * 20);
 		},
-		() => "music",
 		() => "music doom",
 		() => 4,
 		p => {
@@ -6041,12 +6065,36 @@ self.C3_ExpressionFuncs = [
 			const f1 = p._GetNode(1).GetBoundMethod();
 			return () => (n0.ExpObject() + (f1() * 3));
 		},
-		() => "doom",
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => (60 * f0());
+		},
+		() => "version",
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			return () => (and("ERASING... ", (100 - Math.round((v0.GetValue() / 3)))) + "%");
+		},
+		() => "",
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => ("V" + f0());
+		},
+		() => 300,
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => (f0()).toString();
+		},
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			const n1 = p._GetNode(1);
+			const n2 = p._GetNode(2);
+			return () => ((v0.GetValue() * (n1.ExpObject() - 8)) + (n2.ExpObject() + 4));
+		},
+		() => 1,
 		p => {
 			const n0 = p._GetNode(0);
 			return () => n0.ExpObject();
 		},
-		() => 1,
 		p => {
 			const n0 = p._GetNode(0);
 			return () => n0.ExpObject(82079);
@@ -6101,10 +6149,6 @@ self.C3_ExpressionFuncs = [
 		() => "fullscreen: off",
 		() => "doom music: on",
 		() => "doom music: off",
-		p => {
-			const f0 = p._GetNode(0).GetBoundMethod();
-			return () => (60 * f0());
-		},
 		() => "results",
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
@@ -6127,7 +6171,6 @@ self.C3_ExpressionFuncs = [
 		() => "title",
 		() => 50,
 		() => 100,
-		() => "",
 		() => "level",
 		() => 5,
 		() => "Menu",
@@ -6151,17 +6194,6 @@ self.C3_ExpressionFuncs = [
 		p => {
 			const n0 = p._GetNode(0);
 			return () => (n0.ExpObject() - 5);
-		},
-		() => "version",
-		p => {
-			const f0 = p._GetNode(0).GetBoundMethod();
-			return () => ("V" + f0());
-		},
-		p => {
-			const v0 = p._GetNode(0).GetVar();
-			const n1 = p._GetNode(1);
-			const n2 = p._GetNode(2);
-			return () => ((v0.GetValue() * (n1.ExpObject() - 8)) + (n2.ExpObject() + 4));
 		},
 		p => {
 			const n0 = p._GetNode(0);
@@ -6246,6 +6278,8 @@ self.C3_ExpressionFuncs = [
 			return () => (n0.ExpObject() + n1.ExpObject());
 		},
 		() => 0.1,
+		() => -40,
+		() => 40,
 		p => {
 			const n0 = p._GetNode(0);
 			return () => (-n0.ExpBehavior());
@@ -6260,11 +6294,16 @@ self.C3_ExpressionFuncs = [
 		},
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
-			return () => (f0() * (-120));
+			return () => (f0() * (-90));
 		},
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
-			return () => (f0() * 120);
+			return () => (f0() * 90);
+		},
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			const f1 = p._GetNode(1).GetBoundMethod();
+			return () => ((f0() * f1(0, 2)) * 1.5);
 		},
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
@@ -6456,10 +6495,6 @@ self.C3_ExpressionFuncs = [
 		},
 		() => "MeltNow",
 		p => {
-			const f0 = p._GetNode(0).GetBoundMethod();
-			return () => (f0() * 90);
-		},
-		p => {
 			const v0 = p._GetNode(0).GetVar();
 			const v1 = p._GetNode(1).GetVar();
 			return () => Math.round(((v0.GetValue() / v1.GetValue()) * 100));
@@ -6502,6 +6537,7 @@ self.C3_ExpressionFuncs = [
 		() => 82085,
 		() => 82086,
 		() => "splashes",
+		() => "Loader",
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
 			const f1 = p._GetNode(1).GetBoundMethod();
@@ -6524,7 +6560,6 @@ self.C3_ExpressionFuncs = [
 		() => "fade",
 		() => "grow",
 		() => 80,
-		() => 40,
 		p => {
 			const n0 = p._GetNode(0);
 			return () => (n0.ExpObject() - 10);
