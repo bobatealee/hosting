@@ -1,7 +1,7 @@
 if (clairvoyance === undefined) var clairvoyance = {};
 Game.registerMod("clairvoyance", {
 	init:function(){
-		clairvoyance.version = "2.3";
+		clairvoyance.version = "2.4";
 		clairvoyance.fateLength = 10; // default to 10
 
 		// snippet from ccse, thanks klattmose: https://klattmose.github.io/CookieClicker/CCSE-POCs/
@@ -12,7 +12,7 @@ Game.registerMod("clairvoyance", {
 			else return '../mods/' + mod.dir.substring(pos + 1);
 		};
 		
-		clairvoyance.path = (App ? window.GetModPath('clairvoyance') : 'https://bobatealee.com/hosting/mods/clairvoyance');
+		clairvoyance.path = (App ? window.GetModPath('clairvoyance') : 'https://hosting.bobatealee.com/mods/clairvoyance');
 		
 		// ported over so it works here
 		function writeIcon(icon) {
